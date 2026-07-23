@@ -38,11 +38,10 @@ func (h *Handler) HandleChatStream(w http.ResponseWriter, r *http.Request) {
 	}
 
 	logger.Info("Request body parsed", slog.String("model", requestBody.Model))
+	w.WriteHeader(http.StatusOK)
 	w.Write([]byte("data: Here is a piece of data!\n\n"))
 
 	// if f, ok := w.(http.Flusher); ok {
 	// 	f.Flush() // Flush the headers to the client
 	// }
-
-	w.WriteHeader(http.StatusOK)
 }
