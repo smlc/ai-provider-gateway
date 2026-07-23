@@ -9,8 +9,12 @@ import (
 
 func main() {
 	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
+	slog.SetDefault(logger)
+
+	h := api.NewHandler(logger)
+
 	mux := http.NewServeMux()
-	mux.HandleFunc("/chat/completions", api.HandleChatStream)
+	mux.Handle("/chat/completions", api.RequestLogger(logger)(http.HandlerFunc(h.HandleChatStream)))
 
 	port := ":8080"
 	logger.Info("Starting Agentgateway SSE Multiplexer on http://localhost"+port, slog.String("port", port))
