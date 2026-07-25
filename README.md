@@ -29,23 +29,21 @@ Architecture:
 ## 📁 Repository Structure
 
 ```plaintext
-agentgateway/
+/
 ├── cmd/
-│   └── server/
-│       └── main.go           # Entry point: wires configuration, clients, and starts the HTTP server
+│   └── clients/
+│       └── openai-clients.go           # Test client
 ├── internal/
 │   ├── api/
 │   │   ├── handlers.go       # HTTP handlers (e.g., HandleChatCompletion)
 │   │   ├── middleware.go     # Auth checks, rate limiting, and request logging
-│   │   └── server.go         # HTTP router setup (mux / chi / gin)
 │   ├── core/
 │   │   └── multiplexer.go    # SSE loop, buffer flushing, and context cancellation logic
 │   ├── models/
 │   │   └── openai.go         # Standardized request & response structs (ChatRequest, TokenChunk)
 │   └── providers/
 │       ├── interface.go      # The LLMClient contract interface
-│       ├── vllm/             # Client for self-hosted vLLM instances
-│       └── openai/           # Client for OpenAI public API
+│       └── openai_adapter.go # Client for OpenAI public API
 ├── go.mod
 └── go.sum
 ```
