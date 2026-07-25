@@ -16,10 +16,12 @@ type OpenAIAdapter struct {
 	client openai.Client
 }
 
+// NewOpenAIAdapter creates a new OpenAIAdapter with the provided OpenAI client.
 func NewOpenAIAdapter(client openai.Client) *OpenAIAdapter {
 	return &OpenAIAdapter{client: client}
 }
 
+// Stream streams chat completions from the OpenAI API and returns channels for tokens and errors.
 func (a *OpenAIAdapter) Stream(ctx context.Context, req *models.ChatRequest) (<-chan string, <-chan error) {
 	tokens := make(chan string)
 	errs := make(chan error, 1)

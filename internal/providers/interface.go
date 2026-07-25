@@ -5,7 +5,7 @@ import (
 	"sse-multiplexer/internal/models"
 )
 
-// providers/interface.go
+// ProviderClient defines the interface for streaming providers.
 type ProviderClient interface {
-    Stream(ctx context.Context, req *models.ChatRequest) (<-chan string, <-chan error)
+	Stream(ctx context.Context, req *models.ChatRequest) (<-chan string, <-chan error)
 }

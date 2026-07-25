@@ -44,7 +44,7 @@ func (h *Handler) HandleChatStream(w http.ResponseWriter, r *http.Request) {
 	providerClient, err := h.registry.Get(requestBody.Model)
 	if err != nil {
 		logger.Error("Failed to get provider client", slog.String("error", err.Error()))
-		http.Error(w, "failed to get provider client", http.StatusInternalServerError)
+		http.Error(w, "unsupported model", http.StatusBadRequest)
 		return
 	}
 	providerClient.Stream(r.Context(), &requestBody)
