@@ -41,10 +41,12 @@ func (h *Handler) HandleChatStream(w http.ResponseWriter, r *http.Request) {
 	}
 
 	logger.Info("Request body parsed", slog.String("model", requestBody.Model))
-	w.WriteHeader(http.StatusOK)
-	w.Write([]byte("data: Here is a piece of data!\n\n"))
+	providerClient, err := h.registry.Get(requestBody.Model)
+	if err != nil {
+		logger.Error("Failed to get provider client", slog.String("error", err.Error()))
+		http.Error(w, "failed to get provider client", http.StatusInternalServerError)
+		return
+	}
+	providerClient.Stream(r.Context(), &requestBody)
 
-	// if f, ok := w.(http.Flusher); ok {
-	// 	f.Flush() // Flush the headers to the client
-	// }
 }
