@@ -4,18 +4,21 @@ import (
 	"encoding/json"
 	"log/slog"
 	"net/http"
+
+	"sse-multiplexer/internal/core"
 	"sse-multiplexer/internal/logging"
 	"sse-multiplexer/internal/models"
 )
 
 // Handler holds shared dependencies for the API handlers.
 type Handler struct {
-	logger *slog.Logger
+	logger   *slog.Logger
+	registry *core.ModelRegistry
 }
 
 // NewHandler creates a Handler with the provided base logger.
-func NewHandler(logger *slog.Logger) *Handler {
-	return &Handler{logger: logger}
+func NewHandler(logger *slog.Logger, registry *core.ModelRegistry) *Handler {
+	return &Handler{logger: logger, registry: registry}
 }
 
 // HandleChatStream handles POST /chat/completions and streams an SSE response.
@@ -38,10 +41,12 @@ func (h *Handler) HandleChatStream(w http.ResponseWriter, r *http.Request) {
 	}
 
 	logger.Info("Request body parsed", slog.String("model", requestBody.Model))
-	w.WriteHeader(http.StatusOK)
-	w.Write([]byte("data: Here is a piece of data!\n\n"))
+	providerClient, err := h.registry.Get(requestBody.Model)
+	if err != nil {
+		logger.Error("Failed to get provider client", slog.String("error", err.Error()))
+		http.Error(w, "unsupported model", http.StatusBadRequest)
+		return
+	}
+	providerClient.Stream(r.Context(), &requestBody)
 
-	// if f, ok := w.(http.Flusher); ok {
-	// 	f.Flush() // Flush the headers to the client
-	// }
 }

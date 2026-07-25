@@ -5,13 +5,36 @@ import (
 	"net/http"
 	"os"
 	"sse-multiplexer/internal/api"
+	"sse-multiplexer/internal/core"
+	"sse-multiplexer/internal/providers"
+	"strings"
+
+	"github.com/openai/openai-go"
+	"github.com/openai/openai-go/option"
 )
 
 func main() {
 	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
 	slog.SetDefault(logger)
 
-	h := api.NewHandler(logger)
+	apiKey := strings.TrimSpace(os.Getenv("OPENAI_API_KEY"))
+	if apiKey == "" {
+		logger.Error("OPENAI_API_KEY is not set")
+		return
+	}
+
+	openAIClient := openai.NewClient(
+		option.WithAPIKey(apiKey),
+	)
+	openAIAdapter := providers.NewOpenAIAdapter(openAIClient)
+
+	reg := core.New()
+
+	// Register OpenAI models with the registry
+	reg.Register("gpt-4o", openAIAdapter)
+	reg.Register("gpt-4o-mini", openAIAdapter)
+
+	h := api.NewHandler(logger, reg)
 
 	mux := http.NewServeMux()
 	mux.Handle("/chat/completions", api.RequestLogger(logger)(http.HandlerFunc(h.HandleChatStream)))
