@@ -4,18 +4,21 @@ import (
 	"encoding/json"
 	"log/slog"
 	"net/http"
+
+	"sse-multiplexer/internal/core"
 	"sse-multiplexer/internal/logging"
 	"sse-multiplexer/internal/models"
 )
 
 // Handler holds shared dependencies for the API handlers.
 type Handler struct {
-	logger *slog.Logger
+	logger   *slog.Logger
+	registry *core.ModelRegistry
 }
 
 // NewHandler creates a Handler with the provided base logger.
-func NewHandler(logger *slog.Logger) *Handler {
-	return &Handler{logger: logger}
+func NewHandler(logger *slog.Logger, registry *core.ModelRegistry) *Handler {
+	return &Handler{logger: logger, registry: registry}
 }
 
 // HandleChatStream handles POST /chat/completions and streams an SSE response.
