@@ -18,11 +18,11 @@ Architecture:
 
 2. **Provider Clients (`internal/providers`)**
    * Implements actual network clients (e.g., OpenAI API, local vLLM, Groq, or mock clients).
-   * Adheres to a unified `LLMClient` interface using Go channels and context-aware streaming.
+   * Adheres to a unified `ProviderClient` interface using Go channels and context-aware streaming.
 
 3. **The Multiplexer (`internal/core`)**
    * Manages the SSE loop, buffer flushing (`http.Flusher`), and client context cancellation.
-   * Consumes token channels returned by the `LLMClient` without coupling to specific provider implementations.
+   * Consumes token channels returned by the `ProviderClient` without coupling to specific provider implementations.
 
 ---
 
