@@ -1,4 +1,4 @@
-# AI Provider Gateway (`ai-provider-gateway`)
+# AI Provider Gateway
 
 A high-performance, lightweight AI proxy gateway written in Go. This project standardizes streaming AI/LLM completions across multiple model providers (e.g., OpenAI, self-hosted vLLM) behind a unified, OpenAI-compatible streaming interface.
 
